@@ -1,17 +1,22 @@
-//
-//  ScrumMasterApp.swift
-//  ScrumMaster
-//
-//  Created by Thiha Ye Yint Aung on 9/11/25.
-//
-
 import SwiftUI
 
 @main
-struct ScrumMasterApp: App {
+struct DebuggingChallengeApp: App {
+    @State private var currentScreen: CurrentScreen = .main
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            switch currentScreen {
+            case .login:
+                LoginScreen {
+                    currentScreen = .main
+                }
+            case .main:
+                MainScreen()
+            }
         }
     }
+}
+
+enum CurrentScreen {
+    case login, main
 }
