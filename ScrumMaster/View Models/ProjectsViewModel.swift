@@ -11,11 +11,9 @@ class ProjectsViewModel: ObservableObject {
     }
 
     func loadProjects() {
-        Task { @MainActor [weak self] in
-            guard let self = self else { return }
+        Task {
             self.isLoading = true
-            let fetchedProjects = await self.projectService.fetchProjects()
-            self.projects = fetchedProjects
+            self.projects  = await self.projectService.fetchProjects()
             self.isLoading = false
         }
     }

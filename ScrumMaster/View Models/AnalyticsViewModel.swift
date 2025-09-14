@@ -14,13 +14,10 @@ class AnalyticsViewModel: ObservableObject {
     }
 
     func loadAnalytics() {
-        Task { @MainActor [weak self] in
-            guard let self = self else { return }
+        Task {
             self.isLoading = true
-            let details = await self.analyticsService.fetchAnalyticsDetails()
-            let projects = await self.projectService.fetchProjects()
-            self.analyticsDetails = details
-            self.recentProjects = projects
+            self.analyticsDetails = await self.analyticsService.fetchAnalyticsDetails()
+            self.recentProjects   = await self.projectService.fetchProjects()
             self.isLoading = false
         }
     }
