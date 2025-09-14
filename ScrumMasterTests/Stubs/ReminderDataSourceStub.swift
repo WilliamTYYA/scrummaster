@@ -12,9 +12,7 @@
 import Foundation
 
 class ReminderDataSourceStub: ReminderDataSource {    
-    func fetchReminders(
-        completion: @escaping ([ScrumMaster.Reminder]) -> Void
-    ) {
+    func fetchReminders(completion: @escaping ([ScrumMaster.Reminder]) -> Void) {
         fetchReminders(randomDelay: true, completion: completion)
     }
 

@@ -69,6 +69,23 @@ private extension Publisher where Output == UUID, Failure == Error {
 }
 
 /*
+private extension Publisher where Output == UUID, Failure == Error {
+    func verify(
+        sessionId: UUID,
+        verificationSubject: PassthroughSubject<UUID, Error>
+    ) -> AnyPublisher<SessionVerificationResult, Never> {
+        self
+            .filter { $0 == sessionId }
+            .timeout(.milliseconds(100), scheduler: .main, customError: { NSError(...) })
+            .map { _ in .success }                 // match → success
+            .catch { _ in Just(.error) }           // timeout/failure → error
+            .first()                               // auto-complete after one result
+            .eraseToAnyPublisher()
+    }
+}
+*/
+
+/*
  *****************************************************************************
  *                   END OF FILE - DO NOT MODIFY ANYTHING!                   *
  *****************************************************************************
