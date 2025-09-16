@@ -28,7 +28,11 @@ final class LoaderView: UIView {
     override func didMoveToWindow() {
         super.didMoveToWindow()
             // If removed from hierarchy, stop the timer
-        if window == nil { stopTimer() }
+        if window == nil {
+            stopTimer()
+        } else if animated, timer == nil {
+            startTimer()
+        }
     }
     
     private func setupLayers() {
@@ -50,7 +54,7 @@ final class LoaderView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         let lineWidth: CGFloat = 8.0
-        let radius = min(bounds.width, bounds.height) / 2 - lineWidth
+        let radius = max(0, min(bounds.width, bounds.height) / 2 - lineWidth)
         let centerPoint = CGPoint(x: bounds.midX, y: bounds.midY)
         let circularPath = UIBezierPath(
             arcCenter: centerPoint,
@@ -65,13 +69,15 @@ final class LoaderView: UIView {
     
     private func startTimer() {
         guard timer == nil else { return }
-        timer = Timer.scheduledTimer(withTimeInterval: 0.04, repeats: true) { [weak self] _ in
+        let t = Timer(timeInterval: 0.04, repeats: true) { [weak self] _ in
             guard let self else { return }
             var v = self.progressSubject.value + 0.1
-            if v > 1.0 { v = 0.0 }
+            if v > 1.0 { v = 1.0 }
             self.progressSubject.send(v)
             self.progressLayer.strokeEnd = CGFloat(v)
         }
+        RunLoop.main.add(t, forMode: .common) // <- important
+        timer = t
     }
     
     func stopTimer() {
@@ -93,7 +99,7 @@ struct Loader: UIViewRepresentable {
         
             // Break the retain cycle: weakly capture coordinator, and cancel later.
         view.progressSubject
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.main)
             .sink { [weak coordinator = context.coordinator] value in
                 coordinator?.updateProgress(value)
             }

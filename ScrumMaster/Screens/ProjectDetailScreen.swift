@@ -2,7 +2,6 @@ import SwiftUI
 
 struct ProjectDetailScreen: View {
     let project: Project
-    @EnvironmentObject var coordinator: MainCoordinator
 
     var body: some View {
         List {
