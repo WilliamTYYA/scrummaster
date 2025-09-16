@@ -2,41 +2,47 @@ import SwiftUI
 
 struct ProjectsScreen: View {
     @EnvironmentObject var coordinator: MainCoordinator
+    @ObservedObject private var viewModel: ProjectsViewModel
     @State private var searchText = ""
     @State private var loaderProgress: Float = 0.0
-    @ObservedObject private var viewModel: ProjectsViewModel
     
-        // remove init ObservedObject, this no source of truth
+    // remove init ObservedObject, this no source of truth
     init(viewModel: ProjectsViewModel) {
         self.viewModel = viewModel
     }
     
     var body: some View {
         NavigationStack(path: $coordinator.projectPath) {
-            if viewModel.isLoading {
-                Loader(progress: $loaderProgress, animated: true)
-                    .frame(width: 64, height: 64)
-            } else {
-                List {
-                    Section {
-                        ForEach(filteredProjects) { project in
-                            NavigationLink(value: project) {
-                                ProjectRowView(project: project)
+            Group {
+                if viewModel.isLoading {
+                    Loader(progress: $loaderProgress, animated: true)
+                        .frame(width: 64, height: 64)
+                } else {
+                    List {
+                        Section {
+                            ForEach(filteredProjects) { project in
+                                NavigationLink(value: project) {
+                                    ProjectRowView(project: project)
+                                }
                             }
                         }
                     }
-                }
-                .searchable(text: $searchText, prompt: "Search Projects...")
-                .navigationTitle("Projects")
-                .navigationDestination(for: Project.self) { project in
-                    ProjectDetailScreen(project: project)
-                }
-                .navigationDestination(for: WorkItem.self) { item in
-                    WorkItemDetailView(item: item)
+                    .searchable(text: $searchText, prompt: "Search Projects...")
                 }
             }
+            .navigationTitle("Projects")
+            .navigationDestination(for: Project.self) { project in
+                ProjectDetailScreen(project: project)
+            }
+            .navigationDestination(for: WorkItem.self) { item in
+                WorkItemDetailView(item: item)
+            }
         }
-        .task { viewModel.loadProjects() }
+        .task {
+            if viewModel.projects.isEmpty {
+                viewModel.loadProjects()
+            }
+        }
     }
     
     var filteredProjects: [Project] {
