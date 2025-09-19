@@ -20,7 +20,7 @@ struct LoginScreen: View {
     @StateObject var auth = AuthenticationManager()
     let onSuccess: () -> Void
 
-    @State var sessionService: SessionService = DefaultSessionService()
+    let sessionService: SessionService = DefaultSessionService()
 
     var body: some View {
         VStack(spacing: 32) {

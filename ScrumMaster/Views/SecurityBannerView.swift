@@ -46,8 +46,8 @@ struct SecurityBannerView: View {
         .onAppear {
             lastUsername = auth.username
         }
-        .onChange(of: auth.username) { newUsername in
-            lastUsername = newUsername
+        .onChange(of: auth.username) { oldValue, newValue in
+            lastUsername = newValue
         }
         /*
          *****************************************************************************

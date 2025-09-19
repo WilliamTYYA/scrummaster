@@ -46,9 +46,9 @@ struct LoginFormView: View {
                     sessionService.verify {
                         switch $0 {
                         case .success:
-                            onSuccess()
-                        case .error:
                             print("Login failed!")
+                        case .error:
+                            onSuccess()
                         }
                     }
 
